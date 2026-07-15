@@ -1,25 +1,10 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import SlideBox from './SlideBox';
-import FadeInBox from './FadeInBox';
-import ScaleBox from './ScaleBox';
-import ParallelBox from './ParallelBox';
+import ThemeProvider from "./src/context/ThemeContext";
+import AppNavigator from "./src/navigation/AppNavigator";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <FadeInBox />
-    <SlideBox />
-    <ScaleBox />
-    <ParallelBox />
-    
-    </View>
+    <ThemeProvider>
+      <AppNavigator />
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#121212',
-  },
-});

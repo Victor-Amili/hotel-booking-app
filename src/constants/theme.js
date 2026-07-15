@@ -1,13 +1,25 @@
-export const lightTheme = {
-  primary: "#16C55B",
-  background: "#FFFFFF",
-  card: "#F8F8F8",
-  text: "#111111"
+import COLORS from "./colors";
+
+export const LightTheme = {
+  dark: false,
+
+  colors: {
+    background: COLORS.background,
+    card: COLORS.card,
+    text: COLORS.text,
+    primary: COLORS.primary,
+    border: COLORS.lightGray,
+  },
 };
 
-export const darkTheme = {
-  primary: "#16C55B",
-  background: "#111111",
-  card: "#1C1C1C",
-  text: "#FFFFFF"
+export const DarkTheme = {
+  dark: true,
+
+  colors: {
+    background: COLORS.backgroundDark,
+    card: COLORS.cardDark,
+    text: COLORS.textDark,
+    primary: COLORS.primary,
+    border: "#2C2C2C",
+  },
 };
