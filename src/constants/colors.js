@@ -1,23 +1,39 @@
-const COLORS = {
-  primary: "#16C55B",
+// ============================================
+// DESIGN TOKENS - COLORS
+// Primary: #16C55B (Green)
+// ============================================
 
+export const COLORS = {
+  // Primary Green
+  primary: "#16C55B",
+  primaryLight: "#E8F9EE",
+  primaryDark: "#0EA347",
+  
+  // Base
   white: "#FFFFFF",
   black: "#111111",
-
-  background: "#FFFFFF",
-  backgroundDark: "#111111",
-
-  card: "#F8F8F8",
-  cardDark: "#1E1E1E",
-
-  text: "#222222",
-  textDark: "#FFFFFF",
-
-  gray: "#8A8A8A",
-  lightGray: "#E9E9E9",
-
+  
+  // Grays
+  gray50: "#F9FAFB",
+  gray100: "#F3F4F6",
+  gray200: "#E5E7EB",
+  gray300: "#D1D5DB",
+  gray400: "#9CA3AF",
+  gray500: "#6B7280",
+  gray600: "#4B5563",
+  gray700: "#374151",
+  gray800: "#1F2937",
+  gray900: "#111827",
+  
+  // Semantic
   success: "#16C55B",
-  danger: "#E53935",
+  error: "#EF4444",
+  warning: "#F59E0B",
+  info: "#3B82F6",
+  
+  // Misc
+  overlay: "rgba(0, 0, 0, 0.5)",
+  star: "#FBBF24",
 };
 
 export default COLORS;
