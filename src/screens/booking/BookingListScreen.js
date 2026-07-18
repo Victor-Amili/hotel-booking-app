@@ -9,7 +9,7 @@ export default function BookingListScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>
-        My Profile
+        My Bookings
       </Text>
     </View>
   );

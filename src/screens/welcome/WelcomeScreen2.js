@@ -49,7 +49,7 @@ const WelcomeScreen2 = ({ navigation }) => {
         <TouchableOpacity 
           style={styles.button} 
           activeOpacity={0.8}
-          onPress={() => navigation.navigate('Welcome1')} // Go back or skip
+          onPress={() => navigation.navigate('Login')} // Go back or skip
         >
           <Text style={styles.buttonText}>Skip</Text>
         </TouchableOpacity>
