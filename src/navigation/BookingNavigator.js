@@ -2,8 +2,8 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 // List screen (tabs visible)
-// import BookingListScreen from "../screens/booking/BookingListScreen";
-
+import BookingListScreen from "../screens/booking/BookingListScreen";
+import Filter from "../screens/booking/Filter";
 // YOUR booking flow (tabs hidden — full screen)
 import HotelDetails from "../screens/booking/HotelDetails";
 import Booking from "../screens/booking/Booking";

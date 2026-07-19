@@ -2,7 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 // Toluwani's screens
-import Home from "../screens/home/Home";
+import HomeScreen from "../screens/home/Home";
 import Search from "../screens/home/Search";
 import RecentlyBooked from "../screens/home/RecentlyBooked";
 import Bookmarks from "../screens/home/Bookmarks";
@@ -20,7 +20,10 @@ export default function HomeNavigator() {
         animation: "slide_from_right",
       }}
     >
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen
+ name="HomeScreen"
+ component={HomeScreen}
+/>
       <Stack.Screen name="Search" component={Search} />
       <Stack.Screen name="RecentlyBooked" component={RecentlyBooked} />
       <Stack.Screen name="Bookmarks" component={Bookmarks} />

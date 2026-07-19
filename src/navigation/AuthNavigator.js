@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
+import TabNavigator from "./TabNavigator"
 import SplashScreen from "../screens/welcome/SplashScreen";
 import WelcomeScreen from "../screens/welcome/WelcomeScreen";
 import WelcomeScreen1 from "../screens/welcome/WelcomeScreen1"
@@ -26,6 +26,7 @@ export default function AuthNavigator() {
       <Stack.Screen name="WelcomeScreen1" component={WelcomeScreen1} />
       <Stack.Screen name="WelcomeScreen2" component={WelcomeScreen2} />
       <Stack.Screen name="WelcomeScreen3" component={WelcomeScreen3} />
+      <Stack.Screen name="MainApp" component={TabNavigator}/>
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Signup" component={Signup} />
       <Stack.Screen name="FillProfile" component={FillProfile} />
