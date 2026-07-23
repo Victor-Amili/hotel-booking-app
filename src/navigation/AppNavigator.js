@@ -14,17 +14,12 @@ export default function AppNavigator() {
   const { theme } = useTheme();
   const { isAuthenticated, isLoading } = useAuth();
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, backgroundColor: theme.background, alignItems: "center", justifyContent: "center" }}>
-        <ActivityIndicator size="large" color={theme.primary} />
-      </View>
-    );
-  }
+
 
   return (
     <NavigationContainer>
       {isAuthenticated ? <TabNavigator /> : <AuthNavigator />}
+      
     </NavigationContainer>
   );
 }

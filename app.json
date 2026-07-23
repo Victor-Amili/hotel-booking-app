@@ -1,10 +1,9 @@
 {
   "expo": {
-    "name": "collection-app",
-    "slug": "collection-app",
+    "name": "hotel-booking-app",
+    "slug": "hotel-booking-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true,
