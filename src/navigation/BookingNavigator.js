@@ -10,6 +10,7 @@ import Booking from "../screens/booking/Booking";
 import SelectDate from "../screens/booking/SelectDate";
 import Payment from "../screens/booking/Payment";
 import BookingSuccess from "../screens/booking/BookingSuccess";
+import NewCard from "../screens/booking/NewCard";
 
 const Stack = createNativeStackNavigator();
 
@@ -49,6 +50,12 @@ export default function BookingNavigator() {
        <Stack.Screen 
         name="Filter" 
         component={Filter}
+        options={{ tabBarStyle: { display: "none" }, animation: "fade" }}
+      />
+
+       <Stack.Screen 
+        name="NewCard" 
+        component={NewCard}
         options={{ tabBarStyle: { display: "none" }, animation: "fade" }}
       />
     </Stack.Navigator>
