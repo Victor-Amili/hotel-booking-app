@@ -17,7 +17,7 @@ export default function ResetPassword() {
 
   const handleContinue = () => {
     // pass the chosen method (and masked contact) to the next screen
-    navigation.navigate('VerifyCode', {
+    navigation.navigate('OTP', {
       method: selectedMethod,
       contact: selectedMethod === 'sms' ? '+9705994*****99' : 'shady****@gmail.com',
     });
