@@ -20,17 +20,15 @@ import {
   Sun,
   LogOut
 } from 'lucide-react-native';
+import { useTheme } from "../../context/themecontext";
 
 export default function ProfileScreen({ navigation }) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { theme, isDark, toggleTheme } = useTheme();
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
 
-  const toggleSwitch = () => setIsDarkMode(previousState => !previousState);
-
-  // Profile Menu Items Configuration
   const menuItems = [
     { id: '1', title: 'Edit Profile', icon: User, onPress: () => navigation.navigate('EditProfile') },
-    { id: '2', title: 'Payment', icon: CreditCard, onPress: () => {} },
+    { id: '2', title: 'Payment', icon: CreditCard, onPress: () => navigation.navigate('PaymentMethods') },
     { id: '3', title: 'Notifications', icon: Bell, onPress: () => navigation.navigate('Notifications') },
     { id: '4', title: 'Security', icon: ShieldCheck, onPress: () => navigation.navigate('Security') },
     { id: '5', title: 'Help', icon: Info, onPress: () => navigation.navigate('Help')},
@@ -42,32 +40,28 @@ export default function ProfileScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor={theme.background} />
 
-      {/* Screen Title */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profile</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>Profile</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         
-        {/* User Avatar & Info Section */}
         <View style={styles.profileSection}>
-          <View style={styles.avatarContainer}>
+          <View style={[styles.avatarContainer, { backgroundColor: theme.primaryLight }]}>
             <Image
-              source={require('../../../assets/user.png')} // Replace with your avatar image
+              source={require('../../../assets/user.png')}
               style={styles.avatarImage}
             />
           </View>
-          <Text style={styles.userName}>Ronald Richards</Text>
-          <Text style={styles.userEmail}>debbie.baker@example.com</Text>
+          <Text style={[styles.userName, { color: theme.text }]}>Ronald Richards</Text>
+          <Text style={[styles.userEmail, { color: theme.textSecondary }]}>debbie.baker@example.com</Text>
         </View>
 
-        {/* Section Separator Line */}
-        <View style={styles.divider} />
+        <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
-        {/* Menu Navigation Items */}
         <View style={styles.menuContainer}>
           {menuItems.map((item) => {
             const IconComponent = item.icon;
@@ -79,151 +73,120 @@ export default function ProfileScreen({ navigation }) {
                 activeOpacity={0.7}
               >
                 <View style={styles.menuLeft}>
-                  <IconComponent color="#27272A" size={22} style={styles.menuIcon} />
-                  <Text style={styles.menuText}>{item.title}</Text>
+                  <IconComponent color={theme.text} size={22} style={styles.menuIcon} />
+                  <Text style={[styles.menuText, { color: theme.text }]}>{item.title}</Text>
                 </View>
+                <Text style={{ color: theme.textSecondary }}>›</Text>
               </TouchableOpacity>
             );
           })}
 
-          {/* Dark Theme Toggle Item */}
+          {/* Dark Theme Toggle */}
           <View style={styles.menuItem}>
             <View style={styles.toggleLeft}>
-              <Sun color="#27272A" size={22} style={styles.menuIcon} />
-              <Text style={styles.menuText}>Dark Theme</Text>
+              <Sun color={theme.text} size={22} style={styles.menuIcon} />
+              <Text style={[styles.menuText, { color: theme.text }]}>Dark Theme</Text>
             </View>
             <Switch
-              trackColor={{ false: '#E4E4E7', true: '#10B981' }}
-              thumbColor="#FFFFFF"
-              ios_backgroundColor="#E4E4E7"
-              onValueChange={toggleSwitch}
-              value={isDarkMode}
+              value={isDark}
+              onValueChange={toggleTheme}
+              trackColor={{ false: theme.border, true: theme.primary }}
+              thumbColor={isDark ? theme.primary : '#f4f3f4'}
             />
           </View>
 
-          {/* Logout Button (Triggers Custom Modal) */}
+          {/* Logout Button */}
           <TouchableOpacity
-            style={styles.menuItem}
+            style={styles.logoutButton}
             onPress={() => setIsLogoutModalVisible(true)}
             activeOpacity={0.7}
           >
-            <View style={styles.menuLeft}>
-              <LogOut color="#EF4444" size={22} style={styles.menuIcon} />
-              <Text style={styles.logoutText}>Logout</Text>
-            </View>
+            <LogOut color={theme.error} size={22} style={styles.menuIcon} />
+            <Text style={[styles.logoutText, { color: theme.error }]}>Logout</Text>
           </TouchableOpacity>
         </View>
-
       </ScrollView>
 
-      {/* ================= LOGOUT CONFIRMATION MODAL ================= */}
+      {/* Logout Confirmation Modal */}
       <Modal
-        visible={isLogoutModalVisible}
+        animationType="fade"
         transparent={true}
-        animationType="slide"
+        visible={isLogoutModalVisible}
         onRequestClose={() => setIsLogoutModalVisible(false)}
       >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setIsLogoutModalVisible(false)}
-        >
-          <TouchableOpacity 
-            activeOpacity={1} 
-            style={styles.bottomSheetContainer}
-          >
-            {/* Top Green Pill Handle Indicator */}
-            <View style={styles.dragHandle} />
-
-            {/* Title */}
-            <Text style={styles.modalTitle}>Logout</Text>
-
-            {/* Separator Divider */}
-            <View style={styles.modalDivider} />
-
-            {/* Message */}
-            <Text style={styles.modalMessage}>Are you sure want to log out ?</Text>
-
-            {/* Yes, Logout Button */}
-            <TouchableOpacity
-              style={styles.confirmLogoutButton}
-              onPress={handleConfirmLogout}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.confirmLogoutText}>Yes , Logout</Text>
-            </TouchableOpacity>
-
-            {/* Cancel Button */}
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setIsLogoutModalVisible(false)}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </TouchableOpacity>
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
+            <Text style={[styles.modalTitle, { color: theme.text }]}>Logout</Text>
+            <Text style={[styles.modalMessage, { color: theme.textSecondary }]}>
+              Are you sure you want to log out?
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton, { borderColor: theme.border }]}
+                onPress={() => setIsLogoutModalVisible(false)}
+              >
+                <Text style={{ color: theme.text }}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.confirmButton, { backgroundColor: theme.error }]}
+                onPress={handleConfirmLogout}
+              >
+                <Text style={{ color: '#FFF' }}>Yes, Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
       </Modal>
-
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
+  container: { flex: 1 },
   header: {
-    paddingHorizontal: 24,
+    alignItems: 'center',
     paddingVertical: 16,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '700',
-    color: '#000000',
   },
   scrollContent: {
-    paddingBottom: 30,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
   },
   profileSection: {
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+    marginTop: 20,
+    marginBottom: 24,
   },
   avatarContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    overflow: 'hidden',
-    backgroundColor: '#FDE047',
-    padding: 3,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 16,
   },
   avatarImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 60,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
   },
   userName: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#000000',
+    fontSize: 22,
+    fontWeight: '700',
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 14,
-    color: '#6B7280',
-    fontWeight: '500',
   },
   divider: {
     height: 1,
-    backgroundColor: '#F3F4F6',
-    marginHorizontal: 24,
-    marginBottom: 16,
+    marginBottom: 24,
   },
   menuContainer: {
-    paddingHorizontal: 24,
+    gap: 8,
   },
   menuItem: {
     flexDirection: 'row',
@@ -238,87 +201,61 @@ const styles = StyleSheet.create({
   toggleLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   menuIcon: {
     marginRight: 16,
   },
   menuText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#18181B',
+    fontWeight: '500',
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    marginTop: 8,
   },
   logoutText: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#EF4444',
+    fontWeight: '600',
+    marginLeft: 16,
   },
-
-  /* Bottom Sheet Modal Styles */
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent: 'flex-end',
-  },
-  bottomSheetContainer: {
-    backgroundColor: '#FAFAFA',
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 36,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  dragHandle: {
-    width: 38,
-    height: 4,
-    backgroundColor: '#10B981',
-    borderRadius: 2,
-    marginBottom: 16,
+  modalContent: {
+    width: '80%',
+    padding: 24,
+    borderRadius: 20,
+    alignItems: 'center',
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: '800',
-    color: '#EF4444',
-    marginBottom: 16,
-  },
-  modalDivider: {
-    width: '100%',
-    height: 1,
-    backgroundColor: '#E5E7EB',
-    marginBottom: 20,
+    fontWeight: '700',
+    marginBottom: 8,
   },
   modalMessage: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#000000',
-    marginBottom: 24,
+    fontSize: 14,
     textAlign: 'center',
+    marginBottom: 24,
   },
-  confirmLogoutButton: {
+  modalButtons: {
+    flexDirection: 'row',
+    gap: 12,
     width: '100%',
-    backgroundColor: '#10B981',
-    borderRadius: 28,
-    height: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
   },
-  confirmLogoutText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
   },
   cancelButton: {
-    width: '100%',
-    backgroundColor: '#333333',
-    borderRadius: 28,
-    height: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderWidth: 1,
   },
-  cancelText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
-  },
+  confirmButton: {},
 });
