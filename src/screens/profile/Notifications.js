@@ -7,11 +7,16 @@ import {
   SafeAreaView,
   StatusBar,
   Switch,
-  ScrollView
+  ScrollView,
+  Platform
 } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
+// Import Theme Context
+import { useTheme } from "../../context/themecontext";
 
 const Notifications = ({ navigation }) => {
+  const { theme, isDark } = useTheme();
+
   // Toggle states matching your UI design reference
   const [generalNotification, setGeneralNotification] = useState(true);
   const [sound, setSound] = useState(false);
@@ -54,33 +59,39 @@ const Notifications = ({ navigation }) => {
     },
     {
       id: 'newTips',
-      label: 'New tips avaible',
+      label: 'New Tips Available',
       value: newTipsAvailable,
       onChange: setNewTipsAvailable,
     },
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar 
+        barStyle={isDark ? "light-content" : "dark-content"} 
+        backgroundColor={theme.background} 
+      />
 
       {/* Header Section */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation?.goBack()}>
-          <ArrowLeft color="#000000" size={24} />
+          <ArrowLeft color={theme.text} size={24} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Notification</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>Notification</Text>
       </View>
 
       {/* Notification Options List */}
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         {notificationSettings.map((item) => (
-          <View key={item.id} style={styles.settingRow}>
-            <Text style={styles.settingText}>{item.label}</Text>
+          <View key={item.id} style={[styles.settingRow, { borderBottomColor: isDark ? '#27272A' : '#F4F4F5' }]}>
+            <Text style={[styles.settingText, { color: theme.text }]}>{item.label}</Text>
             <Switch
-              trackColor={{ false: '#E4E4E7', true: '#10B981' }}
+              trackColor={{ 
+                false: isDark ? '#3F3F46' : '#E4E4E7', 
+                true: theme.primary 
+              }}
               thumbColor="#FFFFFF"
-              ios_backgroundColor="#E4E4E7"
+              ios_backgroundColor={isDark ? '#3F3F46' : '#E4E4E7'}
               onValueChange={item.onChange}
               value={item.value}
             />
@@ -94,7 +105,7 @@ const Notifications = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 20 : 10,
   },
   header: {
     flexDirection: 'row',
@@ -109,7 +120,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#000000',
   },
   content: {
     paddingHorizontal: 20,
@@ -121,11 +131,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 16,
+    borderBottomWidth: 1,
   },
   settingText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#18181B',
   },
 });
 

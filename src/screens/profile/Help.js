@@ -22,6 +22,8 @@ import {
   Mail,
   HelpCircle
 } from 'lucide-react-native';
+// Import Theme Context
+import { useTheme } from "../../context/themecontext";
 
 // Enable layout animations on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -29,6 +31,8 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 const Help = ({ navigation }) => {
+  const { theme, isDark } = useTheme();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('General');
   const [expandedFaq, setExpandedFaq] = useState(null);
@@ -81,26 +85,29 @@ const Help = ({ navigation }) => {
   });
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar 
+        barStyle={isDark ? "light-content" : "dark-content"} 
+        backgroundColor={theme.background} 
+      />
 
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation?.goBack()}>
-          <ArrowLeft color="#000000" size={24} />
+          <ArrowLeft color={theme.text} size={24} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Help & Support</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>Help & Support</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         
         {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <Search color="#A1A1AA" size={20} style={styles.searchIcon} />
+        <View style={[styles.searchContainer, { backgroundColor: theme.card || theme.backgroundSecondary }]}>
+          <Search color={theme.textSecondary || "#A1A1AA"} size={20} style={styles.searchIcon} />
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, { color: theme.text }]}
             placeholder="Search questions or topics..."
-            placeholderTextColor="#A1A1AA"
+            placeholderTextColor={theme.textSecondary || "#A1A1AA"}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -112,50 +119,53 @@ const Help = ({ navigation }) => {
           showsHorizontalScrollIndicator={false} 
           contentContainerStyle={styles.categoryContainer}
         >
-          {categories.map((cat) => (
-            <TouchableOpacity
-              key={cat}
-              style={[
-                styles.categoryChip,
-                activeTab === cat && styles.activeCategoryChip
-              ]}
-              onPress={() => setActiveTab(cat)}
-              activeOpacity={0.8}
-            >
-              <Text style={[
-                styles.categoryText,
-                activeTab === cat && styles.activeCategoryText
-              ]}>
-                {cat}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          {categories.map((cat) => {
+            const isActive = activeTab === cat;
+            return (
+              <TouchableOpacity
+                key={cat}
+                style={[
+                  styles.categoryChip,
+                  { backgroundColor: isActive ? theme.primary : (theme.card || theme.backgroundSecondary) }
+                ]}
+                onPress={() => setActiveTab(cat)}
+                activeOpacity={0.8}
+              >
+                <Text style={[
+                  styles.categoryText,
+                  { color: isActive ? "#FFFFFF" : (theme.textSecondary || "#71717A") }
+                ]}>
+                  {cat}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
 
         {/* FAQ Section Title */}
-        <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>Frequently Asked Questions</Text>
 
         {/* FAQ Accordions */}
         {filteredFaqs.length > 0 ? (
           filteredFaqs.map((faq) => {
             const isExpanded = expandedFaq === faq.id;
             return (
-              <View key={faq.id} style={styles.faqCard}>
+              <View key={faq.id} style={[styles.faqCard, { backgroundColor: theme.card || theme.backgroundSecondary }]}>
                 <TouchableOpacity
                   style={styles.faqHeader}
                   onPress={() => toggleFaq(faq.id)}
                   activeOpacity={0.7}
                 >
-                  <Text style={styles.faqQuestion}>{faq.question}</Text>
+                  <Text style={[styles.faqQuestion, { color: theme.text }]}>{faq.question}</Text>
                   {isExpanded ? (
-                    <ChevronUp color="#10B981" size={20} />
+                    <ChevronUp color={theme.primary} size={20} />
                   ) : (
-                    <ChevronDown color="#71717A" size={20} />
+                    <ChevronDown color={theme.textSecondary || "#71717A"} size={20} />
                   )}
                 </TouchableOpacity>
                 {isExpanded && (
-                  <View style={styles.faqAnswerContainer}>
-                    <Text style={styles.faqAnswer}>{faq.answer}</Text>
+                  <View style={[styles.faqAnswerContainer, { borderColor: isDark ? '#27272A' : '#E5E7EB' }]}>
+                    <Text style={[styles.faqAnswer, { color: theme.textSecondary }]}>{faq.answer}</Text>
                   </View>
                 )}
               </View>
@@ -163,40 +173,40 @@ const Help = ({ navigation }) => {
           })
         ) : (
           <View style={styles.emptyState}>
-            <HelpCircle color="#D1D5DB" size={48} />
-            <Text style={styles.emptyStateText}>No questions found matching your search.</Text>
+            <HelpCircle color={theme.textSecondary || "#D1D5DB"} size={48} />
+            <Text style={[styles.emptyStateText, { color: theme.textSecondary }]}>No questions found matching your search.</Text>
           </View>
         )}
 
         {/* Contact Support Section */}
-        <Text style={[styles.sectionTitle, { marginTop: 28 }]}>Contact Support</Text>
+        <Text style={[styles.sectionTitle, { color: theme.text, marginTop: 28 }]}>Contact Support</Text>
 
         <View style={styles.supportRow}>
           {/* Call Support */}
-          <TouchableOpacity style={styles.supportCard} activeOpacity={0.8}>
-            <View style={styles.supportIconBg}>
-              <Headphones color="#10B981" size={22} />
+          <TouchableOpacity style={[styles.supportCard, { backgroundColor: theme.card || theme.backgroundSecondary }]} activeOpacity={0.8}>
+            <View style={[styles.supportIconBg, { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#E6F4EA' }]}>
+              <Headphones color={theme.primary} size={22} />
             </View>
-            <Text style={styles.supportTitle}>Call Us</Text>
-            <Text style={styles.supportSubtitle}>24/7 Hotline</Text>
+            <Text style={[styles.supportTitle, { color: theme.text }]}>Call Us</Text>
+            <Text style={[styles.supportSubtitle, { color: theme.textSecondary }]}>24/7 Hotline</Text>
           </TouchableOpacity>
 
           {/* WhatsApp Support */}
-          <TouchableOpacity style={styles.supportCard} activeOpacity={0.8}>
-            <View style={styles.supportIconBg}>
-              <MessageSquare color="#10B981" size={22} />
+          <TouchableOpacity style={[styles.supportCard, { backgroundColor: theme.card || theme.backgroundSecondary }]} activeOpacity={0.8}>
+            <View style={[styles.supportIconBg, { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#E6F4EA' }]}>
+              <MessageSquare color={theme.primary} size={22} />
             </View>
-            <Text style={styles.supportTitle}>Live Chat</Text>
-            <Text style={styles.supportSubtitle}>Instant assistance</Text>
+            <Text style={[styles.supportTitle, { color: theme.text }]}>Live Chat</Text>
+            <Text style={[styles.supportSubtitle, { color: theme.textSecondary }]}>Instant assistance</Text>
           </TouchableOpacity>
 
           {/* Email Support */}
-          <TouchableOpacity style={styles.supportCard} activeOpacity={0.8}>
-            <View style={styles.supportIconBg}>
-              <Mail color="#10B981" size={22} />
+          <TouchableOpacity style={[styles.supportCard, { backgroundColor: theme.card || theme.backgroundSecondary }]} activeOpacity={0.8}>
+            <View style={[styles.supportIconBg, { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#E6F4EA' }]}>
+              <Mail color={theme.primary} size={22} />
             </View>
-            <Text style={styles.supportTitle}>Email</Text>
-            <Text style={styles.supportSubtitle}>Get in touch</Text>
+            <Text style={[styles.supportTitle, { color: theme.text }]}>Email</Text>
+            <Text style={[styles.supportSubtitle, { color: theme.textSecondary }]}>Get in touch</Text>
           </TouchableOpacity>
         </View>
 
@@ -208,7 +218,7 @@ const Help = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 20 : 10,
   },
   header: {
     flexDirection: 'row',
@@ -223,7 +233,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#000000',
   },
   scrollContent: {
     paddingHorizontal: 20,
@@ -233,7 +242,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8F9FA',
     borderRadius: 16,
     paddingHorizontal: 16,
     height: 52,
@@ -246,7 +254,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '500',
-    color: '#18181B',
   },
   categoryContainer: {
     paddingBottom: 16,
@@ -255,28 +262,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#F4F4F5',
     marginRight: 10,
-  },
-  activeCategoryChip: {
-    backgroundColor: '#10B981',
   },
   categoryText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#71717A',
-  },
-  activeCategoryText: {
-    color: '#FFFFFF',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#000000',
     marginVertical: 16,
   },
   faqCard: {
-    backgroundColor: '#F8F9FA',
     borderRadius: 16,
     marginBottom: 12,
     overflow: 'hidden',
@@ -292,7 +289,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '600',
-    color: '#18181B',
     paddingRight: 10,
   },
   faqAnswerContainer: {
@@ -300,11 +296,9 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     paddingTop: 4,
     borderTopWidth: 1,
-    borderColor: '#E5E7EB',
   },
   faqAnswer: {
     fontSize: 14,
-    color: '#6B7280',
     lineHeight: 20,
   },
   emptyState: {
@@ -314,7 +308,6 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     fontSize: 14,
-    color: '#9CA3AF',
     marginTop: 10,
   },
   supportRow: {
@@ -323,7 +316,6 @@ const styles = StyleSheet.create({
   },
   supportCard: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
     borderRadius: 16,
     paddingVertical: 16,
     paddingHorizontal: 10,
@@ -334,7 +326,6 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#E6F4EA',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
@@ -342,12 +333,10 @@ const styles = StyleSheet.create({
   supportTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#18181B',
     marginBottom: 2,
   },
   supportSubtitle: {
     fontSize: 11,
-    color: '#6B7280',
   },
 });
 

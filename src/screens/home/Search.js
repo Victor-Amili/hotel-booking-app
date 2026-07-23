@@ -8,11 +8,15 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
-  StatusBar
+  StatusBar,
+  Platform
 } from 'react-native';
 import { Search as SearchIcon, SlidersHorizontal, Star, Bookmark } from 'lucide-react-native';
+// Import Theme Context
+import { useTheme } from "../../context/themecontext";
 
 const SearchScreen = () => {
+  const { theme, isDark } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All Hotel');
 
@@ -39,22 +43,25 @@ const SearchScreen = () => {
   }, [searchQuery, activeCategory]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar 
+        barStyle={isDark ? "light-content" : "dark-content"} 
+        backgroundColor={theme.background} 
+      />
 
       {/* 1. Functional Search Input Section */}
-      <View style={styles.searchContainer}>
-        <SearchIcon color="#B0B0B0" size={20} style={styles.searchIcon} />
+      <View style={[styles.searchContainer, { backgroundColor: theme.card || theme.backgroundSecondary }]}>
+        <SearchIcon color={theme.textSecondary || "#B0B0B0"} size={20} style={styles.searchIcon} />
         <TextInput
           placeholder="Search"
-          placeholderTextColor="#B0B0B0"
-          style={styles.searchInput}
+          placeholderTextColor={theme.textSecondary || "#B0B0B0"}
+          style={[styles.searchInput, { color: theme.text }]}
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
           clearButtonMode="while-editing"
         />
         <TouchableOpacity style={styles.filterButton}>
-          <SlidersHorizontal color="#10B981" size={18} />
+          <SlidersHorizontal color={theme.primary} size={18} />
         </TouchableOpacity>
       </View>
 
@@ -71,9 +78,16 @@ const SearchScreen = () => {
               <TouchableOpacity
                 key={category}
                 onPress={() => setActiveCategory(category)}
-                style={[styles.categoryBadge, isActive && styles.activeCategoryBadge]}
+                style={[
+                  styles.categoryBadge,
+                  { borderColor: theme.primary },
+                  isActive ? { backgroundColor: theme.primary } : { backgroundColor: theme.background }
+                ]}
               >
-                <Text style={[styles.categoryText, isActive && styles.activeCategoryText]}>
+                <Text style={[
+                  styles.categoryText, 
+                  { color: isActive ? "#FFFFFF" : theme.primary }
+                ]}>
                   {category}
                 </Text>
               </TouchableOpacity>
@@ -84,7 +98,7 @@ const SearchScreen = () => {
 
       {/* 3. Dynamic Section Counter */}
       <View style={styles.metaContainer}>
-        <Text style={styles.sectionTitle}>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
           {activeCategory} ({filteredHotels.length})
         </Text>
       </View>
@@ -93,30 +107,32 @@ const SearchScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {filteredHotels.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No hotels found matching "{searchQuery}"</Text>
+            <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
+              No hotels found matching "{searchQuery}"
+            </Text>
           </View>
         ) : (
           filteredHotels.map((item) => (
-            <View key={item.id} style={styles.hotelCard}>
-              <Image source={item.image} style={styles.cardThumb} />
+            <View key={item.id} style={[styles.hotelCard, { backgroundColor: theme.card || theme.backgroundSecondary }]}>
+              <Image source={item.image} style={[styles.cardThumb, { backgroundColor: theme.backgroundSecondary }]} />
 
               <View style={styles.cardDetails}>
-                <Text style={styles.hotelName} numberOfLines={1}>{item.name}</Text>
-                <Text style={styles.hotelLocation}>{item.location}</Text>
+                <Text style={[styles.hotelName, { color: theme.text }]} numberOfLines={1}>{item.name}</Text>
+                <Text style={[styles.hotelLocation, { color: theme.textSecondary }]}>{item.location}</Text>
                 
                 <View style={styles.ratingContainer}>
                   <Star color="#FBBF24" fill="#FBBF24" size={14} />
-                  <Text style={styles.ratingText}>
+                  <Text style={[styles.ratingText, { color: theme.primary }]}>
                     {item.rating}
-                    <Text style={styles.reviewsText}>({item.reviews} reviews)</Text>
+                    <Text style={[styles.reviewsText, { color: theme.textSecondary }]}> ({item.reviews} reviews)</Text>
                   </Text>
                 </View>
               </View>
 
               <View style={styles.actionColumn}>
-                <Text style={styles.priceText}>${item.price}</Text>
+                <Text style={[styles.priceText, { color: theme.primary }]}>${item.price}</Text>
                 <TouchableOpacity>
-                  <Bookmark color="#10B981" size={22} />
+                  <Bookmark color={theme.primary} size={22} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -130,11 +146,10 @@ const SearchScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 20 : 10, // Safe top inset padding
   },
   searchContainer: {
     flexDirection: 'row',
-    backgroundColor: '#F9FAFB',
     marginHorizontal: 16,
     borderRadius: 16,
     paddingHorizontal: 16,
@@ -147,7 +162,6 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: '#000000',
     fontSize: 16,
     height: '100%',
   },
@@ -167,20 +181,11 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#10B981',
     marginRight: 8,
-    backgroundColor: '#FFFFFF',
-  },
-  activeCategoryBadge: {
-    backgroundColor: '#10B981',
   },
   categoryText: {
-    color: '#10B981',
     fontWeight: '600',
     fontSize: 13,
-  },
-  activeCategoryText: {
-    color: '#FFFFFF',
   },
   metaContainer: {
     paddingHorizontal: 16,
@@ -190,7 +195,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#000000',
   },
   scrollContent: {
     paddingHorizontal: 16,
@@ -199,7 +203,6 @@ const styles = StyleSheet.create({
   },
   hotelCard: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 12,
     alignItems: 'center',
@@ -214,7 +217,6 @@ const styles = StyleSheet.create({
     width: 76,
     height: 76,
     borderRadius: 16,
-    backgroundColor: '#F3F4F6',
   },
   cardDetails: {
     flex: 1,
@@ -224,12 +226,10 @@ const styles = StyleSheet.create({
   hotelName: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#000000',
     marginBottom: 2,
   },
   hotelLocation: {
     fontSize: 13,
-    color: '#6B7280',
     marginBottom: 4,
   },
   ratingContainer: {
@@ -239,11 +239,9 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#10B981',
     marginLeft: 4,
   },
   reviewsText: {
-    color: '#9CA3AF',
     fontWeight: '400',
   },
   actionColumn: {
@@ -256,7 +254,6 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#10B981',
   },
   emptyContainer: {
     alignItems: 'center',
@@ -264,7 +261,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: '#6B7280',
   },
 });
 

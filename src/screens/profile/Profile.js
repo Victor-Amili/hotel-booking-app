@@ -28,7 +28,7 @@ export default function ProfileScreen({ navigation }) {
 
   const menuItems = [
     { id: '1', title: 'Edit Profile', icon: User, onPress: () => navigation.navigate('EditProfile') },
-    { id: '2', title: 'Payment', icon: CreditCard, onPress: () => navigation.navigate('PaymentMethods') },
+    { id: '2', title: 'Payment', icon: CreditCard, onPress: () => navigation.navigate('Payment') },
     { id: '3', title: 'Notifications', icon: Bell, onPress: () => navigation.navigate('Notifications') },
     { id: '4', title: 'Security', icon: ShieldCheck, onPress: () => navigation.navigate('Security') },
     { id: '5', title: 'Help', icon: Info, onPress: () => navigation.navigate('Help')},

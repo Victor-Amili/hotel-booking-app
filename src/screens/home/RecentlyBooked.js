@@ -7,11 +7,16 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
-  StatusBar
+  StatusBar,
+  Platform
 } from 'react-native';
 import { ArrowLeft, Bookmark, Star, SquareCheck, Layers } from 'lucide-react-native';
+// Import Theme Context
+import { useTheme } from "../../context/themecontext";
 
 const RecentlyBooked = ({ navigation }) => {
+  const { theme, isDark } = useTheme();
+
   // Mock data matching the specific entries in your image layout
   const bookedData = [
     { id: 1, name: 'President Hotel', location: 'paris,France', rating: 4.8, reviews: '6,283', price: 35, status: 'checked', image: require('../../../assets/room1.png') },
@@ -23,55 +28,58 @@ const RecentlyBooked = ({ navigation }) => {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar 
+        barStyle={isDark ? "light-content" : "dark-content"} 
+        backgroundColor={theme.background} 
+      />
 
       {/* Header Section */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.background }]}>
         <View style={styles.headerLeft}>
           <TouchableOpacity style={styles.backButton} onPress={() => navigation?.goBack()}>
-            <ArrowLeft color="#000000" size={24} />
+            <ArrowLeft color={theme.text} size={24} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Recently Booked</Text>
+          <Text style={[styles.headerTitle, { color: theme.text }]}>Recently Booked</Text>
         </View>
 
         <TouchableOpacity style={styles.layoutToggle}>
-          <Layers color="#10B981" size={24} />
+          <Layers color={theme.primary} size={24} />
         </TouchableOpacity>
       </View>
 
       {/* Vertical Scroll List */}
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {bookedData.map((item) => (
-          <View key={item.id} style={styles.bookedCard}>
+          <View key={item.id} style={[styles.bookedCard, { backgroundColor: theme.card || theme.backgroundSecondary }]}>
             {/* Thumbnail Image */}
-            <Image source={item.image} style={styles.cardThumb} />
+            <Image source={item.image} style={[styles.cardThumb, { backgroundColor: theme.backgroundSecondary }]} />
 
             {/* Middle Details Container */}
             <View style={styles.cardDetails}>
-              <Text style={styles.hotelName} numberOfLines={1}>
+              <Text style={[styles.hotelName, { color: theme.text }]} numberOfLines={1}>
                 {item.name}
               </Text>
-              <Text style={styles.hotelLocation}>{item.location}</Text>
+              <Text style={[styles.hotelLocation, { color: theme.textSecondary }]}>{item.location}</Text>
               
               <View style={styles.ratingContainer}>
                 <Star color="#FBBF24" fill="#FBBF24" size={14} />
-                <Text style={styles.ratingText}>
+                <Text style={[styles.ratingText, { color: theme.primary }]}>
                   {item.rating}
-                  <Text style={styles.reviewsText}>({item.reviews} reviews)</Text>
+                  <Text style={[styles.reviewsText, { color: theme.textSecondary }]}> ({item.reviews} reviews)</Text>
                 </Text>
               </View>
             </View>
 
             {/* Right Interactive Sidebar Stack */}
             <View style={styles.actionColumn}>
-              <Text style={styles.priceText}>${item.price}</Text>
+              <Text style={[styles.priceText, { color: theme.primary }]}>${item.price}</Text>
               
               <TouchableOpacity activeOpacity={0.7}>
                 {item.status === 'checked' ? (
-                  <SquareCheck color="#10B981" size={22} fill="rgba(16, 185, 129, 0.05)" />
+                  <SquareCheck color={theme.primary} size={22} fill={isDark ? "rgba(16, 185, 129, 0.2)" : "rgba(16, 185, 129, 0.05)"} />
                 ) : (
-                  <Bookmark color="#10B981" size={22} />
+                  <Bookmark color={theme.primary} size={22} />
                 )}
               </TouchableOpacity>
             </View>
@@ -85,7 +93,7 @@ const RecentlyBooked = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 20 : 10, // Safe top inset padding
   },
   header: {
     flexDirection: 'row',
@@ -93,7 +101,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#FFFFFF',
   },
   headerLeft: {
     flexDirection: 'row',
@@ -106,7 +113,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#000000',
   },
   layoutToggle: {
     padding: 4,
@@ -118,7 +124,6 @@ const styles = StyleSheet.create({
   },
   bookedCard: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 12,
     alignItems: 'center',
@@ -134,7 +139,6 @@ const styles = StyleSheet.create({
     width: 76,
     height: 76,
     borderRadius: 16,
-    backgroundColor: '#F3F4F6',
   },
   cardDetails: {
     flex: 1,
@@ -144,12 +148,10 @@ const styles = StyleSheet.create({
   hotelName: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#000000',
     marginBottom: 2,
   },
   hotelLocation: {
     fontSize: 13,
-    color: '#6B7280',
     marginBottom: 4,
   },
   ratingContainer: {
@@ -159,11 +161,9 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#10B981',
     marginLeft: 4,
   },
   reviewsText: {
-    color: '#9CA3AF',
     fontWeight: '400',
   },
   actionColumn: {
@@ -176,7 +176,6 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#10B981',
   },
 });
 
