@@ -5,12 +5,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  StatusBar
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from "../../context/themecontext"; // Adjust path if necessary
 
 export default function ResetPassword() {
   const navigation = useNavigation();
+  const { theme } = useTheme();
 
   // tracks which contact method is selected: 'sms' or 'email'
   const [selectedMethod, setSelectedMethod] = useState('sms');
@@ -23,14 +26,22 @@ export default function ResetPassword() {
     });
   };
 
+  // Determine if we are in light mode for the subtle green selection background
+  const isLightMode = theme.background === '#FFFFFF' || theme.background === '#FFF';
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background, paddingTop: 50 }]}>
+      <StatusBar 
+        barStyle={isLightMode ? "dark-content" : "light-content"} 
+        backgroundColor={theme.background} 
+      />
+
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Forgot Password</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>Forgot Password</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -42,7 +53,7 @@ export default function ResetPassword() {
       </View>
 
       {/* Description */}
-      <Text style={styles.description}>
+      <Text style={[styles.description, { color: theme.textSecondary }]}>
         Select which contact details should we use to reset your password
       </Text>
 
@@ -50,14 +61,19 @@ export default function ResetPassword() {
       <TouchableOpacity
         style={[
           styles.optionCard,
-          selectedMethod === 'sms' && styles.optionCardSelected,
+          { backgroundColor: theme.backgroundSecondary, borderColor: theme.backgroundSecondary },
+          selectedMethod === 'sms' && { 
+            borderColor: theme.primary, 
+            backgroundColor: isLightMode ? '#F0FDF4' : 'rgba(34, 197, 94, 0.15)' 
+          },
         ]}
         onPress={() => setSelectedMethod('sms')}
+        activeOpacity={0.8}
       >
-        <Ionicons name="chatbubble-ellipses-outline" size={22} color="#555" />
+        <Ionicons name="chatbubble-ellipses-outline" size={22} color={theme.textSecondary} />
         <View style={styles.optionTextWrapper}>
-          <Text style={styles.optionLabel}>via SMS</Text>
-          <Text style={styles.optionValue}>+9705994*****99</Text>
+          <Text style={[styles.optionLabel, { color: theme.textSecondary }]}>via SMS</Text>
+          <Text style={[styles.optionValue, { color: theme.text }]}>+9705994*****99</Text>
         </View>
       </TouchableOpacity>
 
@@ -65,19 +81,28 @@ export default function ResetPassword() {
       <TouchableOpacity
         style={[
           styles.optionCard,
-          selectedMethod === 'email' && styles.optionCardSelected,
+          { backgroundColor: theme.backgroundSecondary, borderColor: theme.backgroundSecondary },
+          selectedMethod === 'email' && { 
+            borderColor: theme.primary, 
+            backgroundColor: isLightMode ? '#F0FDF4' : 'rgba(34, 197, 94, 0.15)' 
+          },
         ]}
         onPress={() => setSelectedMethod('email')}
+        activeOpacity={0.8}
       >
-        <Ionicons name="mail-outline" size={22} color="#555" />
+        <Ionicons name="mail-outline" size={22} color={theme.textSecondary} />
         <View style={styles.optionTextWrapper}>
-          <Text style={styles.optionLabel}>via Email</Text>
-          <Text style={styles.optionValue}>shady****@gmail.com</Text>
+          <Text style={[styles.optionLabel, { color: theme.textSecondary }]}>via Email</Text>
+          <Text style={[styles.optionValue, { color: theme.text }]}>shady****@gmail.com</Text>
         </View>
       </TouchableOpacity>
 
       {/* Continue button */}
-      <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
+      <TouchableOpacity 
+        style={[styles.continueButton, { backgroundColor: theme.primary }]} 
+        onPress={handleContinue}
+        activeOpacity={0.8}
+      >
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -87,7 +112,6 @@ export default function ResetPassword() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     paddingHorizontal: 20,
   },
   header: {
@@ -99,7 +123,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#222',
   },
   iconWrapper: {
     alignItems: 'center',
@@ -116,7 +139,6 @@ const styles = StyleSheet.create({
   },
   description: {
     textAlign: 'center',
-    color: '#6B7280',
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 30,
@@ -125,32 +147,23 @@ const styles = StyleSheet.create({
   optionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F3F4F6',
     borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: '#F3F4F6',
     padding: 14,
     marginBottom: 14,
-  },
-  optionCardSelected: {
-    borderColor: '#22C55E',
-    backgroundColor: '#F0FDF4',
   },
   optionTextWrapper: {
     marginLeft: 12,
   },
   optionLabel: {
     fontSize: 13,
-    color: '#6B7280',
   },
   optionValue: {
     fontSize: 15,
-    color: '#111827',
     fontWeight: '500',
     marginTop: 2,
   },
   continueButton: {
-    backgroundColor: '#22C55E',
     borderRadius: 30,
     paddingVertical: 16,
     alignItems: 'center',

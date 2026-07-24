@@ -7,13 +7,17 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
-  ScrollView
+  ScrollView,
+  Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+// Import Theme Context
+import { useTheme } from "../../context/themecontext";
 
 export default function Login() {
   const navigation = useNavigation();
+  const { theme, isDark } = useTheme();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,23 +30,31 @@ export default function Login() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar 
+        barStyle={isDark ? "light-content" : "dark-content"} 
+        backgroundColor={theme.background} 
+      />
 
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* Title */}
-        <Text style={styles.title}>Login to your{'\n'}Account</Text>
+        <Text style={[styles.title, { color: theme.text }]}>
+          Login to your{'\n'}Account
+        </Text>
 
         {/* Email Input */}
-        <View style={styles.inputContainer}>
-          <Ionicons name="mail-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
+        <View style={[
+          styles.inputContainer, 
+          { backgroundColor: theme.card || theme.backgroundSecondary || '#F8F9FA' }
+        ]}>
+          <Ionicons name="mail-outline" size={20} color={theme.textSecondary || "#9CA3AF"} style={styles.inputIcon} />
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: theme.text }]}
             placeholder="Email"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={theme.textSecondary || "#9CA3AF"}
             keyboardType="email-address"
             autoCapitalize="none"
             value={email}
@@ -51,12 +63,15 @@ export default function Login() {
         </View>
 
         {/* Password Input */}
-        <View style={styles.inputContainer}>
-          <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
+        <View style={[
+          styles.inputContainer, 
+          { backgroundColor: theme.card || theme.backgroundSecondary || '#F8F9FA' }
+        ]}>
+          <Ionicons name="lock-closed-outline" size={20} color={theme.textSecondary || "#9CA3AF"} style={styles.inputIcon} />
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: theme.text }]}
             placeholder="Password"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={theme.textSecondary || "#9CA3AF"}
             secureTextEntry={!showPassword}
             value={password}
             onChangeText={setPassword}
@@ -65,7 +80,7 @@ export default function Login() {
             <Ionicons
               name={showPassword ? 'eye-outline' : 'eye-off-outline'}
               size={20}
-              color="#9CA3AF"
+              color={theme.textSecondary || "#9CA3AF"}
             />
           </TouchableOpacity>
         </View>
@@ -76,15 +91,19 @@ export default function Login() {
           onPress={() => setRememberMe(!rememberMe)}
           activeOpacity={0.8}
         >
-          <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
+          <View style={[
+            styles.checkbox, 
+            { borderColor: theme.primary },
+            rememberMe && { backgroundColor: theme.primary }
+          ]}>
             {rememberMe && <Ionicons name="checkmark" size={14} color="#FFFFFF" />}
           </View>
-          <Text style={styles.rememberText}>Remember me</Text>
+          <Text style={[styles.rememberText, { color: theme.text }]}>Remember me</Text>
         </TouchableOpacity>
 
         {/* Sign In Button */}
         <TouchableOpacity 
-          style={styles.signInButton} 
+          style={[styles.signInButton, { backgroundColor: theme.primary }]} 
           onPress={handleSignIn}
           activeOpacity={0.8}
         >
@@ -96,39 +115,68 @@ export default function Login() {
           onPress={() => navigation.navigate('ForgotPassword')}
           style={styles.forgotButton}
         >
-          <Text style={styles.forgotText}>Forgot the password ?</Text>
+          <Text style={[styles.forgotText, { color: theme.primary }]}>Forgot the password ?</Text>
         </TouchableOpacity>
 
         {/* Divider */}
         <View style={styles.dividerRow}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>or continue with</Text>
-          <View style={styles.dividerLine} />
+          <View style={[styles.dividerLine, { backgroundColor: isDark ? '#27272A' : '#E5E7EB' }]} />
+          <Text style={[styles.dividerText, { color: theme.textSecondary || '#6B7280' }]}>or continue with</Text>
+          <View style={[styles.dividerLine, { backgroundColor: isDark ? '#27272A' : '#E5E7EB' }]} />
         </View>
 
         {/* Social Login Buttons */}
         <View style={styles.socialRow}>
           {/* Facebook */}
-          <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
+          <TouchableOpacity 
+            style={[
+              styles.socialButton, 
+              { 
+                backgroundColor: theme.card || theme.backgroundSecondary || '#F8F9FA',
+                borderColor: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'
+              }
+            ]} 
+            activeOpacity={0.8}
+          >
             <Ionicons name="logo-facebook" size={26} color="#1877F2" />
           </TouchableOpacity>
 
           {/* Google */}
-          <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
+          <TouchableOpacity 
+            style={[
+              styles.socialButton, 
+              { 
+                backgroundColor: theme.card || theme.backgroundSecondary || '#F8F9FA',
+                borderColor: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'
+              }
+            ]} 
+            activeOpacity={0.8}
+          >
             <Ionicons name="logo-google" size={24} color="#EA4335" />
           </TouchableOpacity>
 
           {/* Apple */}
-          <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
-            <Ionicons name="logo-apple" size={26} color="#000000" />
+          <TouchableOpacity 
+            style={[
+              styles.socialButton, 
+              { 
+                backgroundColor: theme.card || theme.backgroundSecondary || '#F8F9FA',
+                borderColor: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'
+              }
+            ]} 
+            activeOpacity={0.8}
+          >
+            <Ionicons name="logo-apple" size={26} color={theme.text} />
           </TouchableOpacity>
         </View>
 
         {/* Sign Up Link */}
         <View style={styles.footerRow}>
-          <Text style={styles.footerText}>Don't have an account ? </Text>
+          <Text style={[styles.footerText, { color: theme.textSecondary || '#6B7280' }]}>
+            Don't have an account ?{' '}
+          </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-            <Text style={styles.signUpText}>Sign up</Text>
+            <Text style={[styles.signUpText, { color: theme.primary }]}>Sign up</Text>
           </TouchableOpacity>
         </View>
 
@@ -140,18 +188,18 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    // Top safe padding added for status bar cross-platform consistency
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 12,
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 40,
     paddingBottom: 24,
     alignItems: 'center',
   },
   title: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#18181B',
     textAlign: 'center',
     lineHeight: 36,
     marginBottom: 40,
@@ -159,7 +207,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8F9FA',
     borderRadius: 16,
     paddingHorizontal: 16,
     height: 56,
@@ -173,7 +220,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '500',
-    color: '#18181B',
     height: '100%',
   },
   eyeIcon: {
@@ -190,23 +236,16 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 8,
     borderWidth: 1.5,
-    borderColor: '#10B981',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
-    backgroundColor: '#FFFFFF',
-  },
-  checkboxChecked: {
-    backgroundColor: '#10B981',
   },
   rememberText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#27272A',
   },
   signInButton: {
     width: '100%',
-    backgroundColor: '#10B981',
     borderRadius: 28,
     height: 56,
     alignItems: 'center',
@@ -223,7 +262,6 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   forgotText: {
-    color: '#10B981',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -236,12 +274,10 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#E5E7EB',
   },
   dividerText: {
     marginHorizontal: 12,
     fontSize: 14,
-    color: '#6B7280',
     fontWeight: '500',
   },
   socialRow: {
@@ -254,12 +290,10 @@ const styles = StyleSheet.create({
     width: 64,
     height: 48,
     borderRadius: 14,
-    backgroundColor: '#F8F9FA',
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 10,
     borderWidth: 1,
-    borderColor: '#F3F4F6',
   },
   footerRow: {
     flexDirection: 'row',
@@ -268,11 +302,9 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 14,
-    color: '#6B7280',
   },
   signUpText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#10B981',
   },
 });
