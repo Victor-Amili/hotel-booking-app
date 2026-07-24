@@ -5,9 +5,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  StatusBar
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useTheme } from "../../context/themecontext"; // Adjust path if necessary
 
 const CODE_LENGTH = 4;
 const RESEND_SECONDS = 55;
@@ -15,6 +17,7 @@ const RESEND_SECONDS = 55;
 export default function OTP() {
   const navigation = useNavigation();
   const route = useRoute();
+  const { theme } = useTheme();
 
   // contact info passed from ForgotPassword screen, with a fallback for testing
   const contact = route.params?.contact || '+9705994*****99';
@@ -79,19 +82,26 @@ export default function OTP() {
     ['*', '0', 'delete'],
   ];
 
+  const isLightMode = theme.background === '#FFFFFF' || theme.background === '#FFF';
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background, paddingTop: 50 }]}>
+      <StatusBar 
+        barStyle={isLightMode ? "dark-content" : "light-content"} 
+        backgroundColor={theme.background} 
+      />
+
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Forgot Password</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>Forgot Password</Text>
         <View style={{ width: 24 }} />
       </View>
 
       {/* Info text */}
-      <Text style={styles.infoText}>
+      <Text style={[styles.infoText, { color: theme.textSecondary }]}>
         code has been send to {contact}
       </Text>
 
@@ -105,10 +115,17 @@ export default function OTP() {
               key={index}
               style={[
                 styles.codeBox,
-                isActive && styles.codeBoxActive,
+                { backgroundColor: theme.backgroundSecondary },
+                isActive && [
+                  styles.codeBoxActive,
+                  { 
+                    borderColor: theme.primary,
+                    backgroundColor: isLightMode ? '#F0FDF4' : 'rgba(34, 197, 94, 0.15)'
+                  }
+                ],
               ]}
             >
-              <Text style={styles.codeDigit}>{digit || ''}</Text>
+              <Text style={[styles.codeDigit, { color: theme.text }]}>{digit || ''}</Text>
             </View>
           );
         })}
@@ -116,13 +133,13 @@ export default function OTP() {
 
       {/* Resend */}
       <TouchableOpacity onPress={handleResend} disabled={secondsLeft > 0}>
-        <Text style={styles.resendText}>
+        <Text style={[styles.resendText, { color: theme.primary }]}>
           {secondsLeft > 0 ? `Resend code ${secondsLeft} s` : 'Resend code'}
         </Text>
       </TouchableOpacity>
 
       {/* Custom numeric keypad */}
-      <View style={styles.keypad}>
+      <View style={[styles.keypad, { backgroundColor: theme.backgroundSecondary }]}>
         {keypadRows.map((row, rowIndex) => (
           <View key={rowIndex} style={styles.keypadRow}>
             {row.map((key) => (
@@ -133,9 +150,13 @@ export default function OTP() {
                 disabled={key === '*'}
               >
                 {key === 'delete' ? (
-                  <Ionicons name="backspace-outline" size={22} color="#4B5563" />
+                  <Ionicons name="backspace-outline" size={22} color={theme.text} />
                 ) : (
-                  <Text style={[styles.keypadKeyText, key === '*' && { opacity: 0.3 }]}>
+                  <Text style={[
+                    styles.keypadKeyText, 
+                    { color: theme.text },
+                    key === '*' && { opacity: 0.3 }
+                  ]}>
                     {key}
                   </Text>
                 )}
@@ -151,7 +172,6 @@ export default function OTP() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     paddingHorizontal: 20,
   },
   header: {
@@ -163,11 +183,9 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#222',
   },
   infoText: {
     textAlign: 'center',
-    color: '#6B7280',
     fontSize: 14,
     marginTop: 60,
     marginBottom: 40,
@@ -181,34 +199,30 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 12,
-    backgroundColor: '#F3F4F6',
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 8,
   },
   codeBoxActive: {
     borderWidth: 1.5,
-    borderColor: '#22C55E',
-    backgroundColor: '#F0FDF4',
   },
   codeDigit: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#111827',
   },
   resendText: {
     textAlign: 'center',
-    color: '#22C55E',
     fontSize: 14,
     fontWeight: '500',
   },
   keypad: {
     marginTop: 'auto',
-    backgroundColor: '#F9FAFB',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingVertical: 16,
     paddingHorizontal: 20,
+    // Add margin trick if your main container has padding but keypad should reach edges
+    marginHorizontal: -20, 
   },
   keypadRow: {
     flexDirection: 'row',
@@ -224,6 +238,5 @@ const styles = StyleSheet.create({
   keypadKeyText: {
     fontSize: 22,
     fontWeight: '500',
-    color: '#1F2937',
   },
 });

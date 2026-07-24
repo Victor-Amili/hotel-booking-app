@@ -7,12 +7,15 @@ import {
   StyleSheet,
   SafeAreaView,
   Modal,
+  StatusBar
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from "../../context/themecontext"; // Adjust path if necessary
 
 export default function ResetPassword() {
   const navigation = useNavigation();
+  const { theme } = useTheme();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -51,14 +54,21 @@ export default function ResetPassword() {
     navigation.navigate('MainApp');
   };
 
+  const isLightMode = theme.background === '#FFFFFF' || theme.background === '#FFF';
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background, paddingTop: 50 }]}>
+      <StatusBar 
+        barStyle={isLightMode ? "dark-content" : "light-content"} 
+        backgroundColor={theme.background} 
+      />
+
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Create New Password</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>Create New Password</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -69,15 +79,15 @@ export default function ResetPassword() {
         </View>
       </View>
 
-      <Text style={styles.sectionLabel}>Create Your New Password</Text>
+      <Text style={[styles.sectionLabel, { color: theme.text }]}>Create Your New Password</Text>
 
       {/* New password field */}
-      <View style={styles.inputWrapper}>
-        <Ionicons name="lock-closed-outline" size={18} color="#9CA3AF" style={styles.inputIcon} />
+      <View style={[styles.inputWrapper, { backgroundColor: theme.backgroundSecondary }]}>
+        <Ionicons name="lock-closed-outline" size={18} color={theme.textSecondary} style={styles.inputIcon} />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: theme.text }]}
           placeholder="New password"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={theme.textSecondary}
           secureTextEntry={!showPassword}
           value={password}
           onChangeText={setPassword}
@@ -86,18 +96,18 @@ export default function ResetPassword() {
           <Ionicons
             name={showPassword ? 'eye-outline' : 'eye-off-outline'}
             size={20}
-            color="#9CA3AF"
+            color={theme.textSecondary}
           />
         </TouchableOpacity>
       </View>
 
       {/* Confirm password field */}
-      <View style={styles.inputWrapper}>
-        <Ionicons name="lock-closed-outline" size={18} color="#9CA3AF" style={styles.inputIcon} />
+      <View style={[styles.inputWrapper, { backgroundColor: theme.backgroundSecondary }]}>
+        <Ionicons name="lock-closed-outline" size={18} color={theme.textSecondary} style={styles.inputIcon} />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: theme.text }]}
           placeholder="Confirm password"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={theme.textSecondary}
           secureTextEntry={!showConfirmPassword}
           value={confirmPassword}
           onChangeText={setConfirmPassword}
@@ -106,7 +116,7 @@ export default function ResetPassword() {
           <Ionicons
             name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
             size={20}
-            color="#9CA3AF"
+            color={theme.textSecondary}
           />
         </TouchableOpacity>
       </View>
@@ -121,13 +131,17 @@ export default function ResetPassword() {
         <Ionicons
           name={rememberMe ? 'checkbox' : 'square-outline'}
           size={20}
-          color={rememberMe ? '#10B981' : '#9CA3AF'}
+          color={rememberMe ? theme.primary : theme.textSecondary}
         />
-        <Text style={styles.rememberText}>Remember me</Text>
+        <Text style={[styles.rememberText, { color: theme.textSecondary }]}>Remember me</Text>
       </TouchableOpacity>
 
       {/* Continue button */}
-      <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
+      <TouchableOpacity 
+        style={[styles.continueButton, { backgroundColor: theme.primary }]} 
+        onPress={handleContinue}
+        activeOpacity={0.8}
+      >
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
 
@@ -139,32 +153,33 @@ export default function ResetPassword() {
         onRequestClose={() => setIsSuccessModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
+          <View style={[styles.modalCard, { backgroundColor: theme.card || theme.background }]}>
             
             {/* Graphic Container with Confetti Dots */}
             <View style={styles.graphicContainer}>
               {/* Confetti Dots */}
-              <View style={[styles.dot, styles.dotTopCenter]} />
-              <View style={[styles.dot, styles.dotTopRight]} />
-              <View style={[styles.dot, styles.dotMiddleRight]} />
-              <View style={[styles.dot, styles.dotBottomRight]} />
-              <View style={[styles.dot, styles.dotBottomCenter]} />
-              <View style={[styles.dot, styles.dotMiddleLeft]} />
-              <View style={[styles.dot, styles.dotTopLeft]} />
+              <View style={[styles.dot, styles.dotTopCenter, { backgroundColor: theme.primary }]} />
+              <View style={[styles.dot, styles.dotTopRight, { backgroundColor: theme.primary }]} />
+              <View style={[styles.dot, styles.dotMiddleRight, { backgroundColor: theme.primary }]} />
+              <View style={[styles.dot, styles.dotBottomRight, { backgroundColor: theme.primary }]} />
+              <View style={[styles.dot, styles.dotBottomCenter, { backgroundColor: theme.primary }]} />
+              <View style={[styles.dot, styles.dotMiddleLeft, { backgroundColor: theme.primary }]} />
+              <View style={[styles.dot, styles.dotTopLeft, { backgroundColor: theme.primary }]} />
 
               {/* Main Center Circle */}
-              <View style={styles.mainCircle}>
-                <Ionicons name="checkbox-outline" size={42} color="#000000" />
+              <View style={[styles.mainCircle, { backgroundColor: theme.primary }]}>
+                {/* Checkbox icon color dynamically set to white for contrast on primary color */}
+                <Ionicons name="checkbox-outline" size={42} color="#FFFFFF" />
               </View>
             </View>
 
             {/* Text Message */}
-            <Text style={styles.modalTitle}>Congratulations !</Text>
-            <Text style={styles.modalSubtitle}>Your account is ready to use</Text>
+            <Text style={[styles.modalTitle, { color: theme.primary }]}>Congratulations !</Text>
+            <Text style={[styles.modalSubtitle, { color: theme.text }]}>Your account is ready to use</Text>
 
             {/* Go to Homepage Button */}
             <TouchableOpacity
-              style={styles.modalButton}
+              style={[styles.modalButton, { backgroundColor: theme.primary }]}
               onPress={handleGoToHomepage}
               activeOpacity={0.85}
             >
@@ -182,7 +197,6 @@ export default function ResetPassword() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     paddingHorizontal: 20,
   },
   header: {
@@ -194,7 +208,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#222',
   },
   iconWrapper: {
     alignItems: 'center',
@@ -211,13 +224,11 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 14,
-    color: '#374151',
     marginBottom: 16,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F3F4F6',
     borderRadius: 12,
     paddingHorizontal: 14,
     marginBottom: 14,
@@ -229,7 +240,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
-    color: '#111827',
   },
   errorText: {
     color: '#EF4444',
@@ -246,10 +256,8 @@ const styles = StyleSheet.create({
   rememberText: {
     marginLeft: 8,
     fontSize: 14,
-    color: '#374151',
   },
   continueButton: {
-    backgroundColor: '#10B981',
     borderRadius: 30,
     paddingVertical: 16,
     alignItems: 'center',
@@ -272,7 +280,6 @@ const styles = StyleSheet.create({
   },
   modalCard: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
     borderRadius: 28,
     paddingHorizontal: 24,
     paddingTop: 36,
@@ -296,13 +303,11 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#10B981',
     alignItems: 'center',
     justifyContent: 'center',
   },
   dot: {
     position: 'absolute',
-    backgroundColor: '#10B981',
     borderRadius: 50,
   },
   dotTopCenter: {
@@ -348,20 +353,17 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#10B981',
     marginBottom: 10,
     textAlign: 'center',
   },
   modalSubtitle: {
     fontSize: 16,
-    color: '#374151',
     fontWeight: '500',
     textAlign: 'center',
     marginBottom: 28,
   },
   modalButton: {
     width: '100%',
-    backgroundColor: '#10B981',
     borderRadius: 28,
     height: 52,
     alignItems: 'center',
