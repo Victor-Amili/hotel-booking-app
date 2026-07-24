@@ -9,13 +9,24 @@ import {
   StatusBar 
 } from 'react-native';
 
+// Import your theme context
+import { useTheme } from "../../context/themecontext";
+
 const WelcomeScreen2 = ({ navigation }) => {
+  const { theme } = useTheme();
+  
+  // Determine if it's dark mode to toggle the StatusBar text color
+  const isDarkMode = theme.background === '#000000' || theme.dark;
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar 
+        barStyle={isDarkMode ? "light-content" : "dark-content"} 
+        backgroundColor={theme.background} 
+      />
 
       {/* Top Image Section with unique curved mask and blue accent border */}
-  <View style={styles.imageContainer}>
+      <View style={styles.imageContainer}>
         <Image 
            source={require('../../../assets/welcome2.png')} // Replace with your image path
           style={styles.image}
@@ -26,40 +37,40 @@ const WelcomeScreen2 = ({ navigation }) => {
       {/* Content Area */}
       <View style={styles.contentContainer}>
         {/* Main Heading Text */}
-        <Text style={styles.title}>
+        <Text style={[styles.title, { color: theme.text }]}>
           Travel{"\n"}made easy{"\n"}in your{"\n"}hands
         </Text>
 
         {/* Subtitle / Description */}
-        <Text style={styles.subtitle}>
+        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
           sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </Text>
 
         {/* Pagination Dots (Middle Dot Active) */}
         <View style={styles.paginationContainer}>
-          <View style={styles.dot} />
-          <View style={[styles.dot, styles.activeDot]} />
-          <View style={styles.dot} />
+          <View style={[styles.dot, { backgroundColor: theme.border || '#E0E0E0' }]} />
+          <View style={[styles.dot, styles.activeDot, { backgroundColor: theme.primary }]} />
+          <View style={[styles.dot, { backgroundColor: theme.border || '#E0E0E0' }]} />
         </View>
       </View>
 
       {/* Bottom Button Row */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity 
-          style={styles.button} 
+          style={[styles.button, { backgroundColor: theme.primary }]} 
           activeOpacity={0.8}
           onPress={() => navigation.navigate('Login')} // Go back or skip
         >
           <Text style={styles.buttonText}>Skip</Text>
         </TouchableOpacity>
         
-     <TouchableOpacity 
-        style={styles.button} 
-        onPress={() => navigation.navigate('WelcomeScreen3')} // 👈 This triggers the transition
-      >
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.button, { backgroundColor: theme.primary }]} 
+          onPress={() => navigation.navigate('WelcomeScreen3')} // 👈 This triggers the transition
+        >
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -68,16 +79,15 @@ const WelcomeScreen2 = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    // Removed static background color to rely on theme
   },
- 
-imageContainer: {
-  width: '100%',
-  height: '45%',
-  overflow: 'hidden',
-  borderBottomLeftRadius: 180,
-  transform: [{ scaleX: 1.1 }],
-},
+  imageContainer: {
+    width: '100%',
+    height: '45%',
+    overflow: 'hidden',
+    borderBottomLeftRadius: 180,
+    transform: [{ scaleX: 1.1 }],
+  },
   image: {
     width: '100%',
     height: '100%',
@@ -91,14 +101,12 @@ imageContainer: {
   title: {
     fontSize: 38,
     fontWeight: '800',
-    color: '#000000',
     lineHeight: 46,
     marginBottom: 20,
     fontFamily: 'System',
   },
   subtitle: {
     fontSize: 14,
-    color: '#7C7C7C',
     textAlign: 'center',
     lineHeight: 20,
     paddingHorizontal: 10,
@@ -114,12 +122,10 @@ imageContainer: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#E0E0E0',
     marginHorizontal: 4,
   },
   activeDot: {
     width: 28,
-    backgroundColor: '#10B981',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -128,7 +134,6 @@ imageContainer: {
     paddingBottom: 30,
   },
   button: {
-    backgroundColor: '#10B981', 
     flex: 1,
     marginHorizontal: 8,
     paddingVertical: 14,
@@ -137,7 +142,7 @@ imageContainer: {
     justifyContent: 'center',
   },
   buttonText: {
-    color: '#FFFFFF',
+    color: '#FFFFFF', // Kept white to contrast with primary button background
     fontSize: 18,
     fontWeight: '600',
   },

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react-native";
+import { CreditCard, Wallet, Smartphone, ShieldCheck } from 'lucide-react-native';
 import { useTheme } from "../../context/themecontext";
 
 export default function Payment({ navigation, route }) {
@@ -13,17 +14,30 @@ export default function Payment({ navigation, route }) {
     total: 500,
   };
 
-  const methods = [
-    { id: "paypal", name: "Paypal", icon: "💳" },
-    { id: "google", name: "Google Pay", icon: "🅖" },
-    { id: "apple", name: "Apple Pay", icon: "🍎" },
-    {
-      id: "card",
-      name: "Pay with Debit/Credit Card",
-      icon: "💳",
-      cardNumber: "**** **** **** 4679",
-    },
-  ];
+const methods = [
+  { 
+    id: "paypal", 
+    name: "Paypal", 
+    icon: <Wallet size={24} color={theme.primary} /> 
+  },
+  { 
+    id: "google", 
+    name: "Google Pay", 
+    icon: <Smartphone size={24} color={theme.primary} /> 
+  },
+  { 
+    id: "apple", 
+    name: "Apple Pay", 
+    icon: <ShieldCheck size={24} color={theme.primary} /> 
+  },
+  {
+    id: "card",
+    name: "Pay with Debit/Credit Card",
+    icon: <CreditCard size={24} color={theme.primary} />,
+    cardNumber: "**** **** **** 4679",
+  },
+];
+      
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>

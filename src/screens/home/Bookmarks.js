@@ -14,11 +14,14 @@ import {
 } from 'react-native';
 // Added LayoutGrid/Layers for the header layout toggle if needed
 import { ArrowLeft, Bookmark, Star, SquareCheck, Layers } from 'lucide-react-native';
+import { useTheme } from "../../context/themecontext"; // Added theme context
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2;
 
 const Bookmarks = ({ navigation }) => {
+  const { theme } = useTheme(); // Initialize theme
+
   // 1. Turned data into a state array so removing items actually updates the UI
   const [bookmarkData, setBookmarkData] = useState([
     { id: 1, name: 'President Mila De Hotel', rating: 4.8, price: 35, type: 'bookmark', image: require('../../../assets/room1.png') },
@@ -49,21 +52,25 @@ const Bookmarks = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      {/* Make StatusBar text light/dark based on the background color */}
+      <StatusBar 
+        barStyle={theme.background === '#FFFFFF' || theme.background === '#FFF' ? "dark-content" : "light-content"} 
+        backgroundColor={theme.background} 
+      />
 
-      {/* Header Section */}
-      <View style={styles.header}>
+      {/* Header Section - Added explicit paddingTop for top spacing */}
+      <View style={[styles.header, { borderBottomColor: theme.backgroundSecondary, paddingTop: 50 }]}>
         <View style={styles.headerLeft}>
           <TouchableOpacity style={styles.backButton} onPress={() => navigation?.goBack()}>
-            <ArrowLeft color="#000000" size={24} />
+            <ArrowLeft color={theme.text} size={24} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>My Bookmark</Text>
+          <Text style={[styles.headerTitle, { color: theme.text }]}>My Bookmark</Text>
         </View>
         
         {/* Added Layout toggle icon shown in top right of new design */}
         <TouchableOpacity style={styles.layoutToggle}>
-          <Layers color="#10B981" size={24} />
+          <Layers color={theme.primary} size={24} />
         </TouchableOpacity>
       </View>
 
@@ -71,30 +78,30 @@ const Bookmarks = ({ navigation }) => {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.gridContainer}>
           {bookmarkData.map((item) => (
-            <View key={item.id} style={styles.card}>
+            <View key={item.id} style={[styles.card, { backgroundColor: theme.card || theme.backgroundSecondary }]}>
               <Image source={item.image} style={styles.cardImage} />
               
               <View style={styles.cardDetails}>
-                <Text style={styles.cardName} numberOfLines={2}>
+                <Text style={[styles.cardName, { color: theme.text }]} numberOfLines={2}>
                   {item.name}
                 </Text>
                 
                 <View style={styles.ratingContainer}>
-                  <Star color="#FBBF24" fill="#FBBF24" size={14} />
-                  <Text style={styles.ratingText}>{item.rating}</Text>
+                  <Star color={theme.star || "#FBBF24"} fill={theme.star || "#FBBF24"} size={14} />
+                  <Text style={[styles.ratingText, { color: theme.primary }]}>{item.rating}</Text>
                 </View>
 
                 <View style={styles.cardFooter}>
-                  <Text style={styles.priceText}>
-                    ${item.price}<Text style={styles.priceUnit}>/nigt</Text>
+                  <Text style={[styles.priceText, { color: theme.primary }]}>
+                    ${item.price}<Text style={[styles.priceUnit, { color: theme.textSecondary }]}>/night</Text>
                   </Text>
                   
                   {/* Clicking this now triggers the bottom sheet confirmation */}
                   <TouchableOpacity onPress={() => handleOpenRemoveModal(item)}>
                     {item.type === 'checked' ? (
-                      <SquareCheck color="#10B981" size={20} fill="rgba(16, 185, 129, 0.1)" />
+                      <SquareCheck color={theme.primary} size={20} fill="rgba(16, 185, 129, 0.1)" />
                     ) : (
-                      <Bookmark color="#10B981" fill="#10B981" size={20} />
+                      <Bookmark color={theme.primary} fill={theme.primary} size={20} />
                     )}
                   </TouchableOpacity>
                 </View>
@@ -114,30 +121,32 @@ const Bookmarks = ({ navigation }) => {
         <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
-              <View style={styles.modalContent}>
+              <View style={[styles.modalContent, { backgroundColor: theme.background }]}>
                 
                 {/* Visual Accent Drag Indicator Bar */}
-                <View style={styles.dragIndicator} />
+                <View style={[styles.dragIndicator, { backgroundColor: theme.primary }]} />
 
-                <Text style={styles.modalTitle}>Remove from Bookmark ?</Text>
+                <Text style={[styles.modalTitle, { color: theme.text }]}>Remove from Bookmark ?</Text>
                 
-                <View style={styles.divider} />
+                <View style={[styles.divider, { backgroundColor: theme.backgroundSecondary }]} />
 
                 {/* Selected Item Preview Box */}
                 {selectedItem && (
-                  <View style={styles.previewCard}>
+                  <View style={[styles.previewCard, { backgroundColor: theme.card, borderColor: theme.backgroundSecondary }]}>
                     <Image source={selectedItem.image} style={styles.previewImage} />
                     <View style={styles.previewDetails}>
-                      <Text style={styles.previewName}>{selectedItem.name}</Text>
-                      <Text style={styles.previewLocation}>Rome, Italia</Text>
+                      <Text style={[styles.previewName, { color: theme.text }]}>{selectedItem.name}</Text>
+                      <Text style={[styles.previewLocation, { color: theme.textSecondary }]}>Rome, Italia</Text>
                       <View style={styles.previewRating}>
-                        <Star color="#FBBF24" fill="#FBBF24" size={14} />
-                        <Text style={styles.previewRatingText}>4.8 <Text style={styles.reviewCount}>(6,283 reviews)</Text></Text>
+                        <Star color={theme.star || "#FBBF24"} fill={theme.star || "#FBBF24"} size={14} />
+                        <Text style={[styles.previewRatingText, { color: theme.primary }]}>
+                          4.8 <Text style={[styles.reviewCount, { color: theme.textSecondary }]}>(6,283 reviews)</Text>
+                        </Text>
                       </View>
                     </View>
                     <View style={styles.previewRight}>
-                      <Text style={styles.previewPrice}>${selectedItem.price}</Text>
-                      <Bookmark color="#10B981" fill="#10B981" size={20} />
+                      <Text style={[styles.previewPrice, { color: theme.primary }]}>${selectedItem.price}</Text>
+                      <Bookmark color={theme.primary} fill={theme.primary} size={20} />
                     </View>
                   </View>
                 )}
@@ -145,17 +154,17 @@ const Bookmarks = ({ navigation }) => {
                 {/* Modal Actions Footer Buttons */}
                 <View style={styles.modalButtons}>
                   <TouchableOpacity 
-                    style={[styles.modalButton, styles.cancelButton]} 
+                    style={[styles.modalButton, { backgroundColor: theme.backgroundSecondary }]} 
                     onPress={() => setModalVisible(false)}
                   >
-                    <Text style={[styles.buttonText, styles.cancelButtonText]}>Cancel</Text>
+                    <Text style={[styles.buttonText, { color: theme.primary }]}>Cancel</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity 
-                    style={[styles.modalButton, styles.removeButton]} 
+                    style={[styles.modalButton, { backgroundColor: theme.primary }]} 
                     onPress={handleConfirmRemove}
                   >
-                    <Text style={styles.buttonText}>Yes, Remove</Text>
+                    <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>Yes, Remove</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -171,7 +180,6 @@ const Bookmarks = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
   },
   header: {
     flexDirection: 'row',
@@ -180,7 +188,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
   },
   headerLeft: {
     flexDirection: 'row',
@@ -193,7 +200,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#000000',
   },
   layoutToggle: {
     padding: 4,
@@ -208,7 +214,6 @@ const styles = StyleSheet.create({
   },
   card: {
     width: CARD_WIDTH,
-    backgroundColor: '#F3F4F6',
     borderRadius: 20,
     marginBottom: 16,
     overflow: 'hidden',
@@ -223,7 +228,6 @@ const styles = StyleSheet.create({
   cardName: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#000000',
     lineHeight: 18,
     minHeight: 36,
   },
@@ -235,7 +239,6 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#10B981',
     marginLeft: 4,
   },
   cardFooter: {
@@ -247,7 +250,6 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#10B981',
   },
   priceUnit: {
     fontSize: 11,
@@ -261,7 +263,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 24,
@@ -272,32 +273,27 @@ const styles = StyleSheet.create({
   dragIndicator: {
     width: 44,
     height: 4,
-    backgroundColor: '#10B981',
     borderRadius: 2,
     marginBottom: 24,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#000000',
     textAlign: 'center',
     marginBottom: 16,
   },
   divider: {
     width: '100%',
     height: 1,
-    backgroundColor: '#F3F4F6',
     marginBottom: 20,
   },
   previewCard: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 12,
     width: '100%',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
     marginBottom: 24,
   },
   previewImage: {
@@ -312,11 +308,9 @@ const styles = StyleSheet.create({
   previewName: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#000000',
   },
   previewLocation: {
     fontSize: 13,
-    color: '#9CA3AF',
     marginTop: 2,
   },
   previewRating: {
@@ -327,12 +321,10 @@ const styles = StyleSheet.create({
   previewRatingText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#10B981',
     marginLeft: 4,
   },
   reviewCount: {
     fontWeight: 'normal',
-    color: '#9CA3AF',
   },
   previewRight: {
     alignItems: 'flex-end',
@@ -342,7 +334,6 @@ const styles = StyleSheet.create({
   previewPrice: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#10B981',
   },
   modalButtons: {
     flexDirection: 'row',
@@ -357,19 +348,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: 6,
   },
-  cancelButton: {
-    backgroundColor: '#10B981', // Clean matching brand fills
-  },
-  removeButton: {
-    backgroundColor: '#10B981',
-  },
   buttonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  cancelButtonText: {
-    color: '#FFFFFF',
   }
 });
 

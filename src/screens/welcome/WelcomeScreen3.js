@@ -9,10 +9,21 @@ import {
   StatusBar 
 } from 'react-native';
 
+// Import your theme context
+import { useTheme } from "../../context/themecontext";
+
 const WelcomeScreen3 = ({ navigation }) => {
+  const { theme } = useTheme();
+  
+  // Determine if it's dark mode to toggle the StatusBar text color
+  const isDarkMode = theme.background === '#000000' || theme.dark;
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar 
+        barStyle={isDarkMode ? "light-content" : "dark-content"} 
+        backgroundColor={theme.background} 
+      />
 
       {/* Top Image Section with unique curved mask */}
       <View style={styles.imageContainer}>
@@ -26,28 +37,28 @@ const WelcomeScreen3 = ({ navigation }) => {
       {/* Content Area */}
       <View style={styles.contentContainer}>
         {/* Main Heading Text */}
-        <Text style={styles.title}>
+        <Text style={[styles.title, { color: theme.text }]}>
           Let’s{"\n"}have the{"\n"}best{"\n"}vacation{"\n"}with us
         </Text>
 
         {/* Subtitle / Description */}
-        <Text style={styles.subtitle}>
+        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
           sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </Text>
 
         {/* Pagination Dots (Third Dot Active) */}
         <View style={styles.paginationContainer}>
-          <View style={styles.dot} />
-          <View style={styles.dot} />
-          <View style={[styles.dot, styles.activeDot]} />
+          <View style={[styles.dot, { backgroundColor: theme.border || '#E0E0E0' }]} />
+          <View style={[styles.dot, { backgroundColor: theme.border || '#E0E0E0' }]} />
+          <View style={[styles.dot, styles.activeDot, { backgroundColor: theme.primary }]} />
         </View>
       </View>
 
       {/* Bottom Button Row */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity 
-          style={styles.button} 
+          style={[styles.button, { backgroundColor: theme.primary }]} 
           activeOpacity={0.8}
           onPress={() => navigation.navigate('Login')} // Skip straight to Login
         >
@@ -55,7 +66,7 @@ const WelcomeScreen3 = ({ navigation }) => {
         </TouchableOpacity>
         
         <TouchableOpacity 
-          style={styles.button} 
+          style={[styles.button, { backgroundColor: theme.primary }]} 
           activeOpacity={0.8}
           onPress={() => navigation.replace('Login')} // Use .replace so they can't back-track into onboarding
         >
@@ -69,7 +80,7 @@ const WelcomeScreen3 = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    // Background color dynamically handled via theme
   },
   imageContainer: {
     width: '100%',
@@ -91,14 +102,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 38,
     fontWeight: '800',
-    color: '#000000',
     lineHeight: 46,
     marginBottom: 20,
     fontFamily: 'System', 
   },
   subtitle: {
     fontSize: 14,
-    color: '#7C7C7C',
     textAlign: 'center',
     lineHeight: 20,
     paddingHorizontal: 10,
@@ -114,12 +123,10 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#E0E0E0',
     marginHorizontal: 4,
   },
   activeDot: {
     width: 28, // Wide pill active indicator
-    backgroundColor: '#10B981', // App brand green
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -128,7 +135,6 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   button: {
-    backgroundColor: '#10B981', 
     flex: 1,
     marginHorizontal: 8,
     paddingVertical: 14,

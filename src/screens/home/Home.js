@@ -13,33 +13,39 @@ import {
 } from 'react-native';
 // Import Lucide icons
 import { Bell, Bookmark, Search, SlidersHorizontal, MapPin, Star } from 'lucide-react-native';
+import { useTheme } from "../../context/themecontext"; // Added theme context
 
 const Home = ({navigation}) => {
+  const { theme } = useTheme(); // Initialize theme
   const [activeCategory, setActiveCategory] = useState('Recommended');
 
   const categories = ['Recommended', 'Popular', 'Trending', 'Trendy'];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      {/* Make StatusBar text light/dark based on the background color */}
+      <StatusBar 
+        barStyle={theme.background === '#FFFFFF' || theme.background === '#FFF' ? "dark-content" : "light-content"} 
+        backgroundColor={theme.background} 
+      />
       
-      {/* 1. Header Section */}
-      <View style={styles.header}>
+      {/* 1. Header Section - Added explicit paddingTop for top spacing */}
+      <View style={[styles.header, { paddingTop: 50 }]}>
         <View style={styles.userInfo}>
-          <View style={styles.avatarContainer}>
-            <Text style={styles.avatarText}>H</Text>
+          <View style={[styles.avatarContainer, { backgroundColor: theme.backgroundSecondary, borderColor: theme.primary }]}>
+            <Text style={[styles.avatarText, { color: theme.primary }]}>H</Text>
           </View>
           <View style={styles.userTextContainer}>
-            <Text style={styles.brandTitle}>Hotel</Text>
-            <Text style={styles.userName}>Bessie Cooper 👋</Text>
+            <Text style={[styles.brandTitle, { color: theme.text }]}>Hotel</Text>
+            <Text style={[styles.userName, { color: theme.text }]}>Bessie Cooper 👋</Text>
           </View>
         </View>
         <View style={styles.headerIcons}>
           <TouchableOpacity style={styles.iconButton}>
-            <Bell color="#000000" size={24} />
+            <Bell color={theme.text} size={24} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton}  onPress={() => navigation.navigate("Bookmarks")}>
-            <Bookmark color="#000000" size={24} />
+            <Bookmark color={theme.text} size={24} />
           </TouchableOpacity>
         </View>
       </View>
@@ -47,15 +53,15 @@ const Home = ({navigation}) => {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         
         {/* 2. Search Bar Section */}
-        <View style={styles.searchContainer}>
-          <Search color="#B0B0B0" size={20} style={styles.searchIcon} />
+        <View style={[styles.searchContainer, { backgroundColor: theme.backgroundSecondary }]}>
+          <Search color={theme.textSecondary} size={20} style={styles.searchIcon} />
           <TextInput
             placeholder="Search"
-            placeholderTextColor="#B0B0B0"
-            style={styles.searchInput}
+            placeholderTextColor={theme.textSecondary}
+            style={[styles.searchInput, { color: theme.text }]}
           />
           <TouchableOpacity>
-            <SlidersHorizontal color="#10B981" size={18} />
+            <SlidersHorizontal color={theme.primary} size={18} />
           </TouchableOpacity>
         </View>
 
@@ -72,9 +78,18 @@ const Home = ({navigation}) => {
               <TouchableOpacity
                 key={category}
                 onPress={() => setActiveCategory(category)}
-                style={[styles.categoryBadge, isActive && styles.activeCategoryBadge]}
+                style={[
+                  styles.categoryBadge, 
+                  { 
+                    borderColor: theme.primary,
+                    backgroundColor: isActive ? theme.primary : theme.background 
+                  }
+                ]}
               >
-                <Text style={[styles.categoryText, isActive && styles.activeCategoryText]}>
+                <Text style={[
+                  styles.categoryText, 
+                  { color: isActive ? '#FFFFFF' : theme.primary }
+                ]}>
                   {category}
                 </Text>
               </TouchableOpacity>
@@ -133,32 +148,34 @@ const Home = ({navigation}) => {
 
         {/* 5. Recently Booked Section Header */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recently Booked</Text>
-         <TouchableOpacity
-  onPress={() => navigation.navigate("RecentlyBooked")}
->
-  <Text style={styles.seeAllText}>See All</Text>
-</TouchableOpacity>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>Recently Booked</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("RecentlyBooked")}
+          >
+            <Text style={[styles.seeAllText, { color: theme.primary }]}>See All</Text>
+          </TouchableOpacity>
         </View>
 
         {/* 6. List Item (Recently Booked) */}
-        <View style={styles.bookedItem}>
+        <View style={[styles.bookedItem, { backgroundColor: theme.card }]}>
           <Image 
             source={require('../../../assets/room1.png')} // Replace with your image asset path
             style={styles.bookedThumb}
           />
           <View style={styles.bookedDetails}>
-            <Text style={styles.bookedTitle}>President Hotel</Text>
-            <Text style={styles.bookedLocation}>paris, France</Text>
+            <Text style={[styles.bookedTitle, { color: theme.text }]}>President Hotel</Text>
+            <Text style={[styles.bookedLocation, { color: theme.textSecondary }]}>Paris, France</Text>
             <View style={styles.ratingContainer}>
-              <Star color="#FBBF24" size={14} fill="#FBBF24" />
-              <Text style={styles.ratingText}>4.8 <Text style={styles.reviewText}>(6,283 reviews)</Text></Text>
+              <Star color={theme.star || "#FBBF24"} size={14} fill={theme.star || "#FBBF24"} />
+              <Text style={[styles.ratingText, { color: theme.text }]}>
+                4.8 <Text style={[styles.reviewText, { color: theme.textSecondary }]}>(6,283 reviews)</Text>
+              </Text>
             </View>
           </View>
           <View style={styles.bookedAction}>
-            <Text style={styles.bookedPrice}>$35</Text>
+            <Text style={[styles.bookedPrice, { color: theme.primary }]}>$35</Text>
             <TouchableOpacity style={styles.listItemBookmark}>
-              <Bookmark color="#10B981" size={20} fill="#10B981" />
+              <Bookmark color={theme.primary} size={20} fill={theme.primary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -171,7 +188,6 @@ const Home = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
   },
   scrollContent: {
     paddingBottom: 24,
@@ -181,8 +197,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 16,
     paddingBottom: 12,
+    // paddingTop is now handled inline dynamically to match the Booking Screen
   },
   userInfo: {
     flexDirection: 'row',
@@ -193,13 +209,10 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: '#10B981',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F3F4F6',
   },
   avatarText: {
-    color: '#10B981',
     fontWeight: 'bold',
     fontSize: 16,
   },
@@ -209,12 +222,10 @@ const styles = StyleSheet.create({
   brandTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#000000',
   },
   userName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000000',
     marginTop: 2,
   },
   headerIcons: {
@@ -225,7 +236,6 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: 'row',
-    backgroundColor: '#F9FAFB',
     marginHorizontal: 20,
     borderRadius: 16,
     paddingHorizontal: 16,
@@ -238,7 +248,6 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: '#000000',
     fontSize: 16,
   },
   categoriesContainer: {
@@ -254,20 +263,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#10B981',
     marginRight: 8,
-    backgroundColor: '#FFFFFF',
-  },
-  activeCategoryBadge: {
-    backgroundColor: '#10B981',
   },
   categoryText: {
-    color: '#10B981',
     fontWeight: '600',
     fontSize: 14,
-  },
-  activeCategoryText: {
-    color: '#FFFFFF',
   },
   cardsContent: {
     paddingHorizontal: 20,
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     height: '40%',
   },
   cardTitle: {
-    color: '#FFFFFF',
+    color: '#FFFFFF', // Kept white since it's an image overlay
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 4,
@@ -330,16 +330,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000000',
   },
   seeAllText: {
-    color: '#10B981',
     fontWeight: '600',
     fontSize: 14,
   },
   bookedItem: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
     marginHorizontal: 20,
     borderRadius: 20,
     padding: 12,
@@ -362,11 +359,9 @@ const styles = StyleSheet.create({
   bookedTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000000',
   },
   bookedLocation: {
     fontSize: 13,
-    color: '#6B7280',
     marginTop: 2,
   },
   ratingContainer: {
@@ -377,12 +372,10 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#111827',
     marginLeft: 4,
   },
   reviewText: {
     fontWeight: 'normal',
-    color: '#6B7280',
   },
   bookedAction: {
     alignItems: 'flex-end',
@@ -392,7 +385,6 @@ const styles = StyleSheet.create({
   bookedPrice: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#10B981',
   },
   listItemBookmark: {
     marginTop: 8,
